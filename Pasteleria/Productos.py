@@ -81,3 +81,52 @@ def get_producto(id):
         productos=productos,
         edit_item=data
     )
+
+@productos_blueprint.route('/update_producto/<string:id>', methods=['POST'])
+def update_producto(id):
+
+    nombre = request.form['nombre']
+    precioProducto = request.form['precioProducto']
+    stock = request.form['stock']
+
+    cur = mysql.connection.cursor()
+
+    cur.execute(
+        '''
+        UPDATE producto
+        SET nombre = %s,
+            precioProducto = %s,
+            stock = %s
+        WHERE idproducto = %s
+        ''',
+        (nombre, precioProducto, stock, id)
+    )
+
+    mysql.connection.commit()
+
+    cur.close()
+
+    flash('Producto actualizado correctamente')
+
+    return redirect(url_for('productos.index'))
+
+
+# CAMBIO IMPORTANTE
+@productos_blueprint.route('/delete_producto/<string:id>')
+def delete_producto(id):
+
+    cur = mysql.connection.cursor()
+
+    cur.execute(
+        'DELETE FROM producto WHERE idproducto = %s',
+        [id]
+    )
+
+    mysql.connection.commit()
+
+    cur.close()
+
+    flash('Producto eliminado correctamente')
+
+    return redirect(url_for('productos.index'))
+
