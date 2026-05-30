@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/productos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-logo">Sistema Ventas</a>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('ventas.Index') }}">Vender</a></li>
+                
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Administración ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('clientes.Index') }}">Clientes</a></li>
+                        <li><a href="{{ url_for('productos.index') }}">Productos</a></li>
+                    </ul>
+                </li>
+                
+                <li><a href="{{ url_for('reporte.vista_comprobante') }}">Reportes</a></li>
+            </ul>
+            <div class="nav-user">
+                <span>Usuario: <b>{{ session.get('usuario', 'Conectado') }}</b></span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Salir</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="navbar-spacing"></div>
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">
+                        <p style="margin: 0;">{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="main-wrapper">
+
+        <div class="card form-section">
+            <form action="{{ url_for('productos.update_producto', id=edit_item[0]) if edit_item else url_for('productos.add_nombre') }}" method="POST">
+
+                <input
+                    type="text"
+                    name="nombre"
+                    placeholder="Nombre del Producto"
+                    value="{{ edit_item[1] if edit_item else '' }}"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="precioProducto"
+                    placeholder="Precio"
+                    value="{{ edit_item[2] if edit_item else '' }}"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="stock"
+                    placeholder="Stock"
+                    value="{{ edit_item[3] if edit_item else '' }}"
+                    required
+                >
+
+                <button type="submit" class="btn-save">
+                    {{ 'ACTUALIZAR' if edit_item else 'GUARDAR' }}
+                </button>
+
+                <a href="{{ url_for('productos.index') }}" class="btn-clear">
+                    Limpiar
+                </a>
+
+            </form>
+        </div>
+
+        <div class="card table-section">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Operaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in productos %}
+                        <tr>
+                            <td>{{ p[1] }}</td>
+                            <td>{{ p[2] }}</td>
+                            <td>{{ p[3] }}</td>
+
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('productos.get_producto', id=p[0]) }}" class="btn-edit">
+                                        EDIT
+                                    </a>
+
+                                    <a
+                                        href="{{ url_for('productos.delete_producto', id=p[0]) }}"
+                                        class="btn-delete"
+                                        onclick="return confirm('¿Eliminar producto?');"
+                                    >
+                                        DELETE
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
