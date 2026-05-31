@@ -1,0 +1,413 @@
+/* ==========================================================================
+   1. ESTILOS DE LA BARRA DE OPCIONES (Navegación Superior)
+   ========================================================================== */
+.navbar {
+    background-color: #1e293b;
+    color: white;
+    padding: 0 20px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-container {
+    width: 100%;
+    max-width: 1300px; /* Adaptado al ancho del dashboard de ventas */
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 60px;
+}
+
+.nav-menu > li {
+    position: relative;
+    height: 100%;
+}
+
+.nav-menu a {
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-size: 15px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.nav-menu > li > a:hover {
+    background-color: #334155;
+    color: white;
+}
+
+/* Mecanismo del Desplegable (Administración) */
+.dropdown-menu {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+    min-width: 160px;
+    display: none;
+    border-radius: 0 0 4px 4px;
+    z-index: 1000;
+}
+
+.dropdown-menu li a {
+    color: #334155;
+    padding: 10px 20px;
+    display: block;
+    height: auto;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Sección del Usuario y Cierre de Sesión */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+    color: white;
+}
+
+.nav-user b {
+    color: white;
+}
+
+.btn-logout {
+    background-color: #ef4444;
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: #dc2626;
+}
+
+
+/* ==========================================================================
+   2. CONFIGURACIÓN GENERAL DEL MÓDULO DE VENTAS
+   ========================================================================== */
+body {
+    margin: 0;
+    padding: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9; /* Mismo fondo claro que el Home */
+    color: #334155;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.dashboard-container {
+    max-width: 1300px;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 0 20px;
+}
+
+/* Paneles estilizados como tarjetas elegantes */
+.panel {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.panel-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #1e293b;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 8px;
+}
+
+
+/* ==========================================================================
+   3. FILA SUPERIOR DE BÚSQUEDAS (Clientes / Productos)
+   ========================================================================== */
+.search-row {
+    display: flex;
+    gap: 25px;
+}
+
+.search-box {
+    width: 50%;
+}
+
+.search-bar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.search-bar-container label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.search-bar-container input {
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    outline: none;
+    font-size: 14px;
+    color: #1e293b;
+    transition: border-color 0.2s;
+}
+
+.search-bar-container input:focus {
+    border-color: #2563eb;
+}
+
+/* Contenedor con scroll para los resultados de búsqueda rápidos */
+.table-wrapper {
+    height: 140px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.data-table th, .data-table td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.data-table tbody tr:hover {
+    background-color: #2563eb !important; /* Azul corporativo al seleccionar fila */
+    color: white;
+    cursor: pointer;
+}
+
+
+/* ==========================================================================
+   4. FILA DE SELECCIÓN E INPUTS DE CANTIDAD / EDICIÓN
+   ========================================================================== */
+.selection-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 1.6fr;
+    gap: 25px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 95px 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+.form-grid label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.form-grid input {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 14px;
+    color: #1e293b;
+    outline: none;
+}
+
+.form-grid input:focus:not([readonly]) {
+    border-color: #2563eb;
+}
+
+.form-grid input[readonly] {
+    background-color: #f1f5f9;
+    color: #64748b;
+    border-color: #e2e8f0;
+}
+
+.actions-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.btn-group-toggle {
+    display: flex;
+    gap: 10px;
+    align-self: flex-end;
+}
+
+/* Botones como F/B (Factura/Boleta) */
+.btn-utility {
+    padding: 6px 16px;
+    border: 1px solid #cbd5e1;
+    background: white;
+    color: #475569;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-utility:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+/* Botón Agregar al Carrito */
+.btn-action-add {
+    width: 100%;
+    padding: 12px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-top: 15px;
+    transition: background 0.2s;
+}
+
+.btn-action-add:hover {
+    background-color: #1d4ed8;
+}
+
+
+/* ==========================================================================
+   5. ÁREA INFERIOR (Detalle del Carrito de Compras)
+   ========================================================================== */
+.invoice-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.invoice-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b; /* Cambiado a oscuro para contrastar con el nuevo fondo claro */
+}
+
+/* Botón Quitar Fila */
+.btn-delete-row {
+    padding: 6px 14px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-delete-row:hover {
+    background: #dc2626;
+}
+
+/* Contenedor del Carrito Principal */
+.cart-table-container {
+    height: 220px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: white;
+}
+
+
+/* ==========================================================================
+   6. FOOTER DE PAGOS Y RESÚMENES
+   ========================================================================== */
+.footer-totals {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    background: #f8fafc;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Botón Procesar Venta / Pagar */
+.btn-pay {
+    padding: 12px 50px;
+    background: #10b981; /* Verde éxito para finalizar transacción */
+    color: white;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.btn-pay:hover {
+    background: #059669;
+}
+
+.numeric-summaries {
+    display: flex;
+    gap: 40px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+}
