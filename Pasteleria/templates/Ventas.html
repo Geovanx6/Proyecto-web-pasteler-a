@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FromVentas - Módulo de Facturación</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ventas.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-logo">Sistema Ventas</a>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('ventas.Index') }}">Vender</a></li>
+                
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Administración ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('clientes.Index') }}">Clientes</a></li>
+                        <li><a href="{{ url_for('productos.index') }}">Productos</a></li>
+                    </ul>
+                </li>
+                
+                <li><a href="{{ url_for('reporte.vista_comprobante') }}">Reportes</a></li>
+            </ul>
+            <div class="nav-user">
+                <span>Usuario: <b>{{ session.get('usuario', 'Conectado') }}</b></span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Salir</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        
+        <div class="search-row">
+            
+            <div class="panel search-box">
+                <p class="panel-title">Clientes Disponibles</p>
+                <div class="search-bar-container">
+                    <label>Buscar:</label>
+                    <input type="text" id="inputBuscarCliente" placeholder="Escriba un nombre para buscar...">
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table" id="tablaClientes">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>Nombre</th>
+                                <th>ApPaterno</th>
+                                <th>ApMaterno</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div style="text-align: right; font-size: 11px; margin-top: 4px; color: #555;">Click para Seleccionar</div>
+            </div>
+
+            <div class="panel search-box">
+                <p class="panel-title">Productos Disponibles</p>
+                <div class="search-bar-container">
+                    <label>Buscar:</label>
+                    <input type="text" id="inputBuscarProducto" placeholder="Escriba un producto para buscar...">
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table" id="tablaProductos">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>NombreP</th>
+                                <th>precio</th>
+                                <th>stock</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div style="text-align: right; font-size: 11px; margin-top: 4px; color: #555;">Click para Seleccionar</div>
+            </div>
+
+        </div>
+
+        <div class="panel">
+            <p class="panel-title">Resumen de selección</p>
+            <div class="selection-row">
+                
+                <div>
+                    <span style="font-size: 12px; font-weight: bold; display:block; margin-bottom: 8px;">Datos del Cliente</span>
+                    <div class="form-grid">
+                        <label>Id.Cliente:</label> <input type="text" id="resIdCliente" readonly>
+                        <label>Nombres:</label> <input type="text" id="resNombreCliente" readonly>
+                        <label>Ap.paterno:</label> <input type="text" id="resApPaterno" readonly>
+                        <label>Ap.Materno:</label> <input type="text" id="resApMaterno" readonly>
+                    </div>
+                </div>
+
+                <div>
+                    <span style="font-size: 12px; font-weight: bold; display:block; margin-bottom: 8px;">Datos del producto</span>
+                    <div class="form-grid">
+                        <label>Id.Producto:</label> <input type="text" id="resIdProducto" readonly>
+                        <label>Nombre:</label> <input type="text" id="resNombreProducto" readonly>
+                        <label>Precio:</label> <input type="text" id="resPrecioProducto" readonly>
+                        <label>Stock:</label> <input type="text" id="resStockProducto" readonly>
+                    </div>
+                </div>
+
+                <div class="actions-cell">
+                    <div>
+                        <span style="font-size: 12px; font-weight: bold; display:block; margin-bottom: 8px;">Precio y Cantidad:</span>
+                        <div class="form-grid" style="grid-template-columns: 110px 1fr;">
+                            <label>Precio de Venta:</label> 
+                            <div style="display: flex; gap: 5px;">
+                                <input type="number" step="0.01" id="inputPrecioFinal" readonly style="width: 70px;">
+                                <div class="btn-group-toggle">
+                                    <button class="btn-utility" id="btnHabilitar">Habilitar</button>
+                                    <button class="btn-utility" id="btnDeshabilitar" disabled>Deshabilitar</button>
+                                </div>
+                            </div>
+                            <label>Cantidad de Venta:</label> <input type="number" id="inputCantidadVenta" min="1" style="width: 70px;">
+                        </div>
+                    </div>
+                    <button class="btn-action-add" id="btnAgregarProducto">Agregar Producto</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel invoice-wrapper">
+            <div class="invoice-header-info">
+                <div>Resumen de Venta &nbsp;&nbsp;&nbsp;&nbsp; <span style="font-weight: normal;">Ultima Factura Creada:</span> <span id="lblUltimaFactura">{{ ultima_factura }}</span></div>
+                <div>
+                    <button class="btn-delete-row" id="btnEliminarItem">Eliminar</button>
+                    <div style="font-size: 11px; font-weight: normal; color: #555; text-align: right; margin-top:2px;">Seleccionar para Eliminar</div>
+                </div>
+            </div>
+            
+            <div class="cart-table-container">
+                <table class="data-table" id="tablaResumenVenta">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>NombreProducto</th>
+                            <th>PrecioProducto</th>
+                            <th>Cantidad</th>
+                            <th>SubTotal</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="footer-totals">
+                <button class="btn-pay" id="btnPagar">Pagar</button>
+                <div class="numeric-summaries">
+                    <div>IVA(15%): <span id="lblIVA">0.00</span></div>
+                    <div>Total a Pagar: <span id="lblTotal">0.00</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let carrito = [];
+        let filaCarritoSeleccionada = null;
+
+        // Búsqueda de Clientes en Tiempo Real (Añadido prefijo /ventas/)
+        document.getElementById('inputBuscarCliente').addEventListener('input', function() {
+            let q = this.value;
+            if(q === "") {
+                document.querySelector('#tablaClientes tbody').innerHTML = "";
+                return;
+            }
+            fetch(`/ventas/buscar_cliente?q=${encodeURIComponent(q)}`)
+                .then(res => res.json())
+                .then(data => {
+                    let html = "";
+                    data.forEach(c => {
+                        html += `<tr onclick="seleccionarCliente(${c.id}, '${c.nombre}', '${c.appaterno}', '${c.apmaterno}')">
+                            <td>${c.id}</td>
+                            <td>${c.nombre}</td>
+                            <td>${c.appaterno}</td>
+                            <td>${c.apmaterno}</td>
+                        </tr>`;
+                    });
+                    document.querySelector('#tablaClientes tbody').innerHTML = html;
+                });
+        });
+
+        function seleccionarCliente(id, nombre, appaterno, apmaterno) {
+            document.getElementById('resIdCliente').value = id;
+            document.getElementById('resNombreCliente').value = nombre;
+            document.getElementById('resApPaterno').value = appaterno;
+            document.getElementById('resApMaterno').value = apmaterno;
+        }
+
+        // Búsqueda de Productos en Tiempo Real (Añadido prefijo /ventas/)
+        document.getElementById('inputBuscarProducto').addEventListener('input', function() {
+            let q = this.value;
+            if(q === "") {
+                document.querySelector('#tablaProductos tbody').innerHTML = "";
+                return;
+            }
+            fetch(`/ventas/buscar_producto?q=${encodeURIComponent(q)}`)
+                .then(res => res.json())
+                .then(data => {
+                    let html = "";
+                    data.forEach(p => {
+                        html += `<tr onclick="seleccionarProducto(${p.id}, '${p.nombre}', ${p.precio}, ${p.stock})">
+                            <td>${p.id}</td>
+                            <td>${p.nombre}</td>
+                            <td>${p.precio.toFixed(2)}</td>
+                            <td>${p.stock}</td>
+                        </tr>`;
+                    });
+                    document.querySelector('#tablaProductos tbody').innerHTML = html;
+                });
+        });
+
+        function seleccionarProducto(id, nombre, precio, stock) {
+            document.getElementById('resIdProducto').value = id;
+            document.getElementById('resNombreProducto').value = nombre;
+            document.getElementById('resPrecioProducto').value = precio.toFixed(2);
+            document.getElementById('resStockProducto').value = stock;
+            
+            document.getElementById('inputPrecioFinal').value = precio.toFixed(2);
+        }
+
+        // Habilitar / Deshabilitar edición de precio final
+        document.getElementById('btnHabilitar').addEventListener('click', function() {
+            document.getElementById('inputPrecioFinal').removeAttribute('readonly');
+            this.disabled = true;
+            document.getElementById('btnDeshabilitar').disabled = false;
+        });
+
+        document.getElementById('btnDeshabilitar').addEventListener('click', function() {
+            document.getElementById('inputPrecioFinal').setAttribute('readonly', true);
+            this.disabled = true;
+            document.getElementById('btnHabilitar').disabled = false;
+            document.getElementById('inputPrecioFinal').value = document.getElementById('resPrecioProducto').value;
+        });
+
+        // Pasar Producto al Carrito
+        document.getElementById('btnAgregarProducto').addEventListener('click', function() {
+            let id = document.getElementById('resIdProducto').value;
+            let nombre = document.getElementById('resNombreProducto').value;
+            let precioUnitario = parseFloat(document.getElementById('inputPrecioFinal').value);
+            let cantidad = parseInt(document.getElementById('inputCantidadVenta').value);
+            let stockDisponible = parseInt(document.getElementById('resStockProducto').value);
+
+            if(!id) { alert("Seleccione un producto primero"); return; }
+            if(!cantidad || cantidad <= 0) { alert("Ingrese una cantidad válida"); return; }
+            if(cantidad > stockDisponible) { alert("La cantidad es mayor al stock disponible"); return; }
+
+            let existe = carrito.find(item => item.id === id);
+            if(existe) {
+                alert("El producto ya fue registrado en el resumen");
+                return;
+            }
+
+            let subtotal = precioUnitario * cantidad;
+            carrito.push({ id, nombre, precioVenta: precioUnitario, cantidad, subtotal });
+            
+            renderizarCarrito();
+            limpiarSeccionProducto();
+        });
+
+        function renderizarCarrito() {
+            let html = "";
+            let totalSubtotal = 0;
+            
+            carrito.forEach((item, index) => {
+                totalSubtotal += item.subtotal;
+                html += `<tr id="fila-cart-${index}" onclick="marcarFilaCarrito(${index})">
+                    <td>${item.id}</td>
+                    <td>${item.nombre}</td>
+                    <td>${item.precioVenta.toFixed(2)}</td>
+                    <td>${item.cantidad}</td>
+                    <td>${item.subtotal.toFixed(2)}</td>
+                </tr>`;
+            });
+            
+            document.querySelector('#tablaResumenVenta tbody').innerHTML = html;
+            
+            let totalIva = totalSubtotal * 0.15;
+            let totalGeneral = totalSubtotal + totalIva;
+            
+            document.getElementById('lblIVA').innerText = totalIva.toFixed(2);
+            document.getElementById('lblTotal').innerText = totalGeneral.toFixed(2);
+        }
+
+        function marcarFilaCarrito(index) {
+            if(filaCarritoSeleccionada !== null) {
+                let el = document.getElementById(`fila-cart-${filaCarritoSeleccionada}`);
+                if(el) el.style.backgroundColor = "white";
+            }
+            filaCarritoSeleccionada = index;
+            document.getElementById(`fila-cart-${index}`).style.backgroundColor = "#ffcc00";
+        }
+
+        document.getElementById('btnEliminarItem').addEventListener('click', function() {
+            if(filaCarritoSeleccionada === null) {
+                alert("Seleccione una fila del resumen para eliminar");
+                return;
+            }
+            carrito.splice(filaCarritoSeleccionada, 1);
+            filaCarritoSeleccionada = null;
+            renderizarCarrito();
+        });
+
+        function limpiarSeccionProducto() {
+            document.getElementById('resIdProducto').value = "";
+            document.getElementById('resNombreProducto').value = "";
+            document.getElementById('resPrecioProducto').value = "";
+            document.getElementById('resStockProducto').value = "";
+            document.getElementById('inputPrecioFinal').value = "";
+            document.getElementById('inputCantidadVenta').value = "";
+            document.getElementById('inputPrecioFinal').setAttribute('readonly', true);
+            document.getElementById('btnHabilitar').disabled = false;
+            document.getElementById('btnDeshabilitar').disabled = true;
+        }
+
+        // Envío de la Factura Completa al Backend (Añadido prefijo /ventas/)
+        document.getElementById('btnPagar').addEventListener('click', function() {
+            let idCliente = document.getElementById('resIdCliente').value;
+            if(!idCliente) { alert("Debe seleccionar un cliente antes de proceder al pago"); return; }
+            if(carrito.length === 0) { alert("El resumen de compra no tiene productos agregados"); return; }
+
+            let payload = {
+                idcliente: idCliente,
+                items: carrito
+            };
+
+            fetch('/ventas/procesar_venta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert(data.message);
+                    document.getElementById('lblUltimaFactura').innerText = data.nueva_factura;
+                    carrito = [];
+                    filaCarritoSeleccionada = null;
+                    renderizarCarrito();
+                    limpiarTodoLuegoVenta();
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(err => alert("Error de conexión al procesar la venta"));
+        });
+
+        function limpiarTodoLuegoVenta() {
+            document.getElementById('inputBuscarCliente').value = "";
+            document.querySelector('#tablaClientes tbody').innerHTML = "";
+            document.getElementById('inputBuscarProducto').value = "";
+            document.querySelector('#tablaProductos tbody').innerHTML = "";
+            
+            document.getElementById('resIdCliente').value = "";
+            document.getElementById('resNombreCliente').value = "";
+            document.getElementById('resApPaterno').value = "";
+            document.getElementById('resApMaterno').value = "";
+            
+            limpiarSeccionProducto();
+            
+            document.getElementById('lblIVA').innerText = "0.00";
+            document.getElementById('lblTotal').innerText = "0.00";
+        }
+    </script>
+</body>
+</html>
