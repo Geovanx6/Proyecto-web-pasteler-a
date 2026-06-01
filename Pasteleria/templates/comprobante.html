@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Comprobante de Factura</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/comprobante.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-logo">Sistema Ventas</a>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('ventas.Index') }}">Vender</a></li>
+                
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Administración ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('clientes.Index') }}">Clientes</a></li>
+                        <li><a href="{{ url_for('productos.index') }}">Productos</a></li>
+                    </ul>
+                </li>
+                
+                <li><a href="{{ url_for('reporte.vista_comprobante') }}">Reportes</a></li>
+            </ul>
+            <div class="nav-user">
+                <span>Usuario: <b>{{ session.get('usuario', 'Conectado') }}</b></span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Salir</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="comprobante-container">
+        
+        <div class="panel">
+            <p class="panel-title">Ingresar Número de Factura</p>
+            <div class="search-group">
+                <input type="number" id="txtnumerofactura" placeholder="Ej. 1024" min="1">
+                <button class="btn-primary" id="btnbuscar">Buscar</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <p class="panel-title">Información General de Venta</p>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Factura N°:</label>
+                    <span id="lblnumerofactura">-----</span>
+                </div>
+                <div class="info-item">
+                    <label>Fecha de venta:</label>
+                    <span id="lblfechaventa">-----</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <p class="panel-title">Datos del Cliente</p>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Nombres:</label>
+                    <span id="lblnombres">-----</span>
+                </div>
+                <div class="info-item">
+                    <label>Ap. Paterno:</label>
+                    <span id="lblappaterno">-----</span>
+                </div>
+                <div class="info-item">
+                    <label>Ap. Materno:</label>
+                    <span id="lblapmaterno">-----</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <p class="panel-title">Productos</p>
+            <div class="table-wrapper">
+                <table class="data-table" id="dgvproducto">
+                    <thead>
+                        <tr>
+                            <th>ID Producto</th>
+                            <th>Descripción / Producto</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #94a3b8;">No se han realizado búsquedas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="footer-actions">
+                <button class="btn-success" id="btnImprimir" disabled>Imprimir PDF</button>
+                <div class="totals-group">
+                    <div>IVA (15%): <span id="lbliva">0.00</span></div>
+                    <div>Total: <span id="lbltotal">0.00</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Acción: Botón Buscar Factura (Corregido)
+        document.getElementById('btnbuscar').addEventListener('click', function() {
+            let numFactura = document.getElementById('txtnumerofactura').value;
+            
+            if(!numFactura) {
+                alert("Por favor, ingrese un número de factura válido.");
+                return;
+            }
+
+            fetch(`/obtener_comprobante/${numFactura}`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'error') {
+                        alert(data.message);
+                        resetearFormulario();
+                        return;
+                    }
+
+                    // Mapeo de datos del Cliente y Cabecera
+                    document.getElementById('lblnumerofactura').innerText = data.cabecera.idfactura;
+                    document.getElementById('lblfechaventa').innerText = data.cabecera.fechaFactura;
+                    document.getElementById('lblnombres').innerText = data.cabecera.nombre;
+                    document.getElementById('lblappaterno').innerText = data.cabecera.appaterno;
+                    document.getElementById('lblapmaterno').innerText = data.cabecera.apmaterno;
+
+                    // Mapeo de la tabla de Productos
+                    let tbody = document.querySelector('#dgvproducto tbody');
+                    let htmlProductos = "";
+                    
+                    data.productos.forEach(p => {
+                        htmlProductos += `<tr>
+                            <td>${p.idproducto}</td>
+                            <td>${p.nombre_producto}</td>
+                            <td>$${p.precioventa.toFixed(2)}</td>
+                            <td>${p.cantidad}</td>
+                            <td>$${p.subtotal.toFixed(2)}</td>
+                        </tr>`;
+                    });
+                    tbody.innerHTML = htmlProductos;
+
+                    // Mapeo de Totales Financieros
+                    document.getElementById('lbliva').innerText = `$${data.totales.iva.toFixed(2)}`;
+                    document.getElementById('lbltotal').innerText = `$${data.totales.total.toFixed(2)}`;
+
+                    // Habilitar botón de impresión
+                    document.getElementById('btnImprimir').disabled = false;
+                })
+                .catch(err => alert("Ocurrió un error en la conexión con el servidor."));
+        });
+
+        // Acción: Botón Imprimir PDF (Corregido)
+        document.getElementById('btnImprimir').addEventListener('click', function() {
+            let numFactura = document.getElementById('lblnumerofactura').innerText;
+            if(numFactura === "-----") return;
+
+            // Abrir la generación de PDF nativa del servidor en una pestaña nueva
+            window.open(`/generar_pdf_factura/${numFactura}`, '_blank');
+        });
+
+        function resetearFormulario() {
+            document.getElementById('lblnumerofactura').innerText = "-----";
+            document.getElementById('lblfechaventa').innerText = "-----";
+            document.getElementById('lblnombres').innerText = "-----";
+            document.getElementById('lblappaterno').innerText = "-----";
+            document.getElementById('lblapmaterno').innerText = "-----";
+            document.querySelector('#dgvproducto tbody').innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No se han realizado búsquedas</td></tr>`;
+            document.getElementById('lbliva').innerText = "0.00";
+            document.getElementById('lbltotal').innerText = "0.00";
+            document.getElementById('btnImprimir').disabled = true;
+        }
+    </script>
+</body>
+</html>
