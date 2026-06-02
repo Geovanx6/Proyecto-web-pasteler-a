@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/home" class="nav-logo">Sistema Ventas</a>
+            <ul class="nav-menu">
+                <li><a href="/ventas">Vender</a></li>
+                
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Administración ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/clientes">Clientes</a></li>
+                        <li><a href="/productos">Productos</a></li>
+                    </ul>
+                </li>
+                
+                <li><a href="/comprobante">Reportes</a></li>
+            </ul>
+            <div class="nav-user">
+                <span>Usuario: <b>{{ usuario }}</b></span>
+                <a href="/logout" class="btn-logout">Salir</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="welcome-box">
+            <h1>Bienvenido al Panel Principal</h1>
+            <p>Selecciona una opción del menú superior para comenzar a operar el sistema.</p>
+            
+            <div class="modules-grid">
+                <a href="/ventas" class="module-card">
+                    <h3>🛒 Módulo Ventas</h3>
+                    <p>Registrar nuevas ventas de productos.</p>
+                </a>
+                <a href="/clientes" class="module-card">
+                    <h3>👥 Clientes</h3>
+                    <p>Administrar base de datos de clientes.</p>
+                </a>
+                <a href="/productos" class="module-card">
+                    <h3>📦 Productos</h3>
+                    <p>Gestionar inventarios y precios.</p>
+                </a>
+                <a href="/comprobante" class="module-card">
+                    <h3>📄 Reportes</h3>
+                    <p>Buscar comprobantes e imprimir PDF.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
