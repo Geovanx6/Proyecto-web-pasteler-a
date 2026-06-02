@@ -1,0 +1,179 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos de la Barra de Navegación */
+.navbar {
+    background-color: #1e293b;
+    color: white;
+    padding: 0 20px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-logo {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 60px;
+}
+
+.nav-menu > li {
+    position: relative;
+    height: 100%;
+}
+
+.nav-menu a {
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-size: 15px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.nav-menu > li > a:hover {
+    background-color: #334155;
+    color: white;
+}
+
+/* Mecanismo del Dropdown (Administración) */
+.dropdown-menu {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+    min-width: 160px;
+    display: none;
+    border-radius: 0 0 4px 4px;
+    z-index: 1000;
+}
+
+.dropdown-menu li a {
+    color: #334155;
+    padding: 10px 20px;
+    display: block;
+    height: auto;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #f1f5f9;
+    color: #1e293b;
+}
+
+/* Mostrar submenú al pasar el cursor */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Sección de Usuario y Cierre de Sesión */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+}
+
+.btn-logout {
+    background-color: #ef4444;
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: #dc2626;
+}
+
+/* Área de bienvenida y Accesos directos */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.welcome-box {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.welcome-box h1 {
+    color: #1e293b;
+    margin-top: 0;
+}
+
+.welcome-box p {
+    color: #64748b;
+    font-size: 16px;
+    margin-bottom: 40px;
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.module-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    text-align: left;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: #cbd5e1;
+}
+
+.module-card h3 {
+    margin-top: 0;
+    color: #2563eb;
+    font-size: 16px;
+}
+
+.module-card p {
+    margin: 5px 0 0 0;
+    font-size: 13px;
+    color: #64748b;
+}
