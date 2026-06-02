@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+
+    <div class="login-container">
+        <form action="/" method="POST" class="login-form">
+            <h2>Login</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="form-group">
+                <label for="txtUsuario">Usuario</label>
+                <input type="text" id="txtUsuario" name="txtUsuario" placeholder="Ingrese su usuario" required>
+            </div>
+
+            <div class="form-group">
+                <label for="txtcontraseňa">Contraseña</label>
+                <input type="password" id="txtcontraseňa" name="txtcontraseňa" placeholder="Ingrese su contraseña" required>
+            </div>
+
+            <button type="submit" class="btn-login">Inicio de sesion</button>
+        </form>
+    </div>
+
+</body>
+</html>
